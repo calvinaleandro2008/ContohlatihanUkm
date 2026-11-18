@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Perumahan &amp; Stok Unit PIK2 | Agung Sedayu Group</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body class="portal-body">
+
+    <!-- Navbar -->
+    <header class="asg-navbar">
+        <div class="nav-container">
+            <a href="index.html" class="asg-logo">
+                <span class="logo-top">AGUNG SEDAYU</span>
+                <span class="logo-bottom">GROUP</span>
+            </a>
+
+            <nav class="asg-menu">
+                <ul>
+                    <li><a href="index.html">← Kembali ke Halaman PIK2</a></li>
+                    <li><span id="roleStatusBadge" class="user-badge">Mode Pembeli (Lihat Stok)</span></li>
+                    <li>
+                        <button id="btnOpenLogin" onclick="bukaModalLogin()" class="nav-portal-btn" style="cursor:pointer;">🔐 Login Manager</button>
+                        <button id="btnLogoutManager" onclick="logoutManager()" class="btn-logout" style="display:none;">Logout Manager</button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Header Portal -->
+    <section class="portal-header">
+        <div class="container">
+            <span class="hero-pill" id="portalGoldLabel">KATALOG UNIT &amp; KETERSEDIAAN — PIK2</span>
+            <h1 id="portalMainHeading">Data Cluster &amp; Stok Perumahan</h1>
+            <p id="portalSubHeading">Informasi ketersediaan unit rumah, cluster, dan lokasi jalan terkini untuk calon pembeli PIK2.</p>
+        </div>
+    </section>
+
+    <!-- Konten Utama -->
+    <main class="container portal-main">
+
+        <!-- 3 Kartu Ringkasan Statistik Stok -->
+        <div class="stats-summary-grid">
+            <div class="stat-box">
+                <div class="stat-icon navy">🏘️</div>
+                <div>
+                    <span class="stat-label">Total Tipe / Blok</span>
+                    <h3 id="statTotalBlok">0</h3>
+                </div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon gold">🔑</div>
+                <div>
+                    <span class="stat-label">Total Stok Unit Tersedia</span>
+                    <h3 id="statTotalStok">0 Unit</h3>
+                </div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon green">✨</div>
+                <div>
+                    <span class="stat-label">Cluster Aktif Dipasarkan</span>
+                    <h3 id="statTotalCluster">0 Cluster</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="portal-grid" id="perumahanGridLayout" style="grid-template-columns: 1fr;">
+
+            <!-- Kolom Kiri: Form Tambah / Edit Data Perumahan (HANYA MUNCUL JIKA MANAGER LOGIN) -->
+            <div class="portal-card form-card" id="managerFormSection" style="display: none;">
+                <span class="gold-label">PANEL MANAJEMEN STOK</span>
+                <h2 id="formTitle">Tambah Data Unit Rumah</h2>
+                <div class="gold-divider"></div>
+
+                <form id="perumahanForm">
+                    <input type="hidden" id="editIndex" value="-1">
+
+                    <div class="form-group">
+                        <label for="cluster">Nama Cluster</label>
+                        <select id="cluster" required>
+                            <option value="">-- Pilih Cluster PIK2 --</option>
+                            <option value="Cluster Atlanta">Cluster Atlanta</option>
+                            <option value="Cluster California">Cluster California</option>
+                            <option value="Cluster Florida">Cluster Florida</option>
+                            <option value="Cluster San Antonio">Cluster San Antonio</option>
+                            <option value="Cluster Pasadena">Cluster Pasadena</option>
+                            <option value="Cluster Scarlett">Cluster Scarlett</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="kodeUnit">Nomor / Kode Unit</label>
+                        <input type="text" id="kodeUnit" placeholder="Contoh: Blok A2 / No. 15" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="namaJalan">Lokasi Jalan</label>
+                        <input type="text" id="namaJalan" placeholder="Contoh: Jl. Boulevard Utama PIK2" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tipeRumah">Tipe Rumah</label>
+                        <select id="tipeRumah" required>
+                            <option value="">-- Pilih Tipe Rumah --</option>
+                            <option value="Type Brown (4.5x10)">Type Brown (4.5x10)</option>
+                            <option value="Type Jade (6x10)">Type Jade (6x10)</option>
+                            <option value="Type Olive (8x10)">Type Olive (8x10)</option>
+                            <option value="Type Sapphire (8x12.5)">Type Sapphire (8x12.5)</option>
+                            <option value="Type Emerald (10x15)">Type Emerald (10x15)</option>
+                            <option value="Type Diamond (12x20)">Type Diamond (12x20)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="stokRumah">Stok Rumah (Unit)</label>
+                        <input type="number" id="stokRumah" min="0" placeholder="Contoh: 5" required>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" id="btnSimpan" class="btn-asg-gold full-btn">Simpan Data Rumah</button>
+                        <button type="button" id="btnBatal" class="btn-cancel full-btn" style="display:none;" onclick="batalEdit()">Batal Edit</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Kolom Kanan: Tabel Daftar Cluster & Stok Rumah -->
+            <div class="portal-card table-card">
+                <div class="table-top-bar">
+                    <div>
+                        <h2>Daftar Unit &amp; Stok Tersedia</h2>
+                        <span class="badge-count">Menampilkan <strong id="totalData">0</strong> data unit perumahan</span>
+                    </div>
+                    <div class="search-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" class="search-box" placeholder="Cari Cluster, Unit, Jalan, atau Tipe..." onkeyup="cariPerumahan()">
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="asg-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Cluster</th>
+                                <th>Unit</th>
+                                <th>Lokasi Jalan</th>
+                                <th>Tipe Rumah</th>
+                                <th>Status Stok</th>
+                                <th id="colAksiManager" style="display: none;">Aksi Manager</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelPerumahanBody">
+                            <!-- Data dirender otomatis oleh script.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Modal Popup Login Manager (Desain Mewah) -->
+    <div id="loginManagerModal" class="modal-overlay" onclick="tutupModalLogin(event)">
+        <div class="login-modal-card">
+            <button type="button" class="login-close-btn" onclick="tutupModalLoginBtn()">&times;</button>
+
+            <div class="login-modal-header">
+                <div class="login-lock-circle">🔐</div>
+                <span class="gold-label" style="color:#e3c78a;">OTORISASI INTERNAL</span>
+                <h3>Portal Manager PIK2</h3>
+                <p>Masuk untuk mengelola ketersediaan unit &amp; memperbarui stok perumahan</p>
+            </div>
+
+            <div class="login-modal-body">
+                <form id="managerLoginForm">
+                    <div class="form-group">
+                        <label for="mgrUsername">Username Manager</label>
+                        <div class="input-with-icon">
+                            <span>👤</span>
+                            <input type="text" id="mgrUsername" placeholder="Masukkan username manager" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mgrPassword">Password</label>
+                        <div class="input-with-icon">
+                            <span>🔑</span>
+                            <input type="password" id="mgrPassword" placeholder="Masukkan password" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-asg-gold full-btn" style="padding: 13px; font-size: 0.9rem; letter-spacing: 0.5px;">
+                        Masuk ke Dashboard Manager →
+                    </button>
+
+                    <div class="demo-info-box">
+                        <strong>💡 Kredensial Demo Manager:</strong><br>
+                        Username: <code>manager</code> &nbsp;|&nbsp; Password: <code>admin123</code>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="asg-footer" style="padding-top: 25px; margin-top: 60px;">
+        <div class="footer-bottom" style="border-top: none;">
+            <div class="container" style="text-align: center;">
+                <p>Copyright Agung Sedayu Group 2026 — Katalog Data Perumahan &amp; Stok Unit PIK2</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
